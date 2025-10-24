@@ -1,9 +1,10 @@
 # 🎪 React Native Swiper Reanimated
 
 [![npm version](https://img.shields.io/npm/v/react-native-swiper-reanimated.svg)](https://www.npmjs.com/package/react-native-swiper-reanimated)
+[![npm downloads](https://img.shields.io/npm/dm/react-native-swiper-reanimated.svg)](https://www.npmjs.com/package/react-native-swiper-reanimated)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](https://www.typescriptlang.org/)
-[![React Native](https://img.shields.io/badge/React%20Native-0.81+-61DAFB.svg)](https://reactnative.dev/)
+[![React Native](https://img.shields.io/badge/React%20Native-0.70+-61DAFB.svg)](https://reactnative.dev/)
 [![Reanimated](https://img.shields.io/badge/Reanimated-v3%2Fv4-purple.svg)](https://docs.swmansion.com/react-native-reanimated/)
 
 **The next-generation swiper component for React Native**. Built from the ground up with **React Native Reanimated v3/v4** and **TypeScript**, delivering buttery-smooth 60fps animations, modern gesture handling, and unparalleled customization.
@@ -120,20 +121,20 @@
 
 ## 📦 Installation
 
+### Install the Package
+
 ```bash
 # npm
-npm install react-native-swiper-reanimated react-native-reanimated react-native-gesture-handler
+npm install react-native-swiper-reanimated
 
 # yarn
-yarn add react-native-swiper-reanimated react-native-reanimated react-native-gesture-handler
+yarn add react-native-swiper-reanimated
 
 # bun
-bun add react-native-swiper-reanimated react-native-reanimated react-native-gesture-handler
+bun add react-native-swiper-reanimated
 ```
 
-### Peer Dependencies
-
-Ensure you have these dependencies installed:
+### Install Required Peer Dependencies
 
 ```bash
 # Required peer dependencies

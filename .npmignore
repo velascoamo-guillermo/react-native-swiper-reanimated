@@ -1,0 +1,35 @@
+# Development files
+.expo/
+.vscode/
+node_modules/
+bun.lock
+
+# Example app files
+App.tsx
+app.json
+index.js
+expo-env.d.ts
+
+# Build and cache
+*.log
+.DS_Store
+.env*
+
+# Testing
+__tests__/
+*.test.*
+*.spec.*
+
+# Documentation assets (keep README.md)
+assets/
+docs/
+
+# Config files
+eslint.config.js
+.eslintrc.*
+.prettierrc.*
+tsconfig.json
+
+# Git
+.git/
+.gitignore
