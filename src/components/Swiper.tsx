@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Dimensions, ListRenderItem } from "react-native";
 import Animated, {
   clamp,
+  SharedValue,
   useAnimatedScrollHandler,
   useSharedValue,
 } from "react-native-reanimated";
@@ -11,14 +12,36 @@ import Pagination from "./Pagination";
 
 const { width, height } = Dimensions.get("window");
 
+interface SwiperRenderItemInfo<T> {
+  item: T;
+  index: number;
+  goToNext: () => void;
+  goToPrevious: () => void;
+}
+
+interface CustomComponentProps {
+  activeIndex: number;
+  total: number;
+  progress: SharedValue<number>;
+  goToNext: () => void;
+  goToPrevious: () => void;
+}
+
 interface SwiperProps<T> {
   data: T[];
-  customArrowLeft?: React.ReactNode;
-  customArrowRight?: React.ReactNode;
-  customPagination?: React.ReactNode;
-  renderItem: ListRenderItem<T>;
+  customArrowLeft?:
+    | React.ReactElement
+    | ((props: CustomComponentProps) => React.ReactElement);
+  customArrowRight?:
+    | React.ReactElement
+    | ((props: CustomComponentProps) => React.ReactElement);
+  customPagination?:
+    | React.ReactElement
+    | ((props: CustomComponentProps) => React.ReactElement);
+  renderItem: (info: SwiperRenderItemInfo<T>) => React.ReactElement;
   showPagination?: boolean;
   horizontal?: boolean;
+  showArrows?: boolean;
   onActiveIndexChange?: (index: number) => void;
 }
 
@@ -30,6 +53,7 @@ export default function Swiper<T>({
   customPagination,
   showPagination = true,
   horizontal = true,
+  showArrows = true,
   onActiveIndexChange,
 }: SwiperProps<T>) {
   const flatList = useRef<Animated.FlatList>(null);
@@ -70,6 +94,38 @@ export default function Swiper<T>({
     }
   };
 
+  const wrappedRenderItem: ListRenderItem<T> = ({ item, index }) => {
+    return renderItem({
+      item,
+      index,
+      goToNext,
+      goToPrevious,
+    });
+  };
+
+  const renderCustomComponent = (
+    component:
+      | React.ReactElement
+      | ((props: CustomComponentProps) => React.ReactElement)
+      | undefined
+  ) => {
+    if (!component) return null;
+
+    const customProps: CustomComponentProps = {
+      activeIndex,
+      total: data.length,
+      progress: scrollX,
+      goToNext,
+      goToPrevious,
+    };
+
+    if (typeof component === "function") {
+      return component(customProps);
+    }
+
+    return React.cloneElement(component, customProps);
+  };
+
   return (
     <>
       <Animated.FlatList
@@ -80,38 +136,36 @@ export default function Swiper<T>({
         showsVerticalScrollIndicator={false}
         bounces={false}
         data={data}
-        renderItem={renderItem}
+        renderItem={wrappedRenderItem}
         snapToInterval={interval}
         decelerationRate={"fast"}
         scrollEventThrottle={1000 / 60}
         onScroll={onScroll}
       />
-      {customArrowLeft ? (
-        customArrowLeft
-      ) : (
-        <Arrow
-          direction={horizontal ? "left" : "up"}
-          activeIndex={activeIndex}
-          onPress={goToPrevious}
-        />
-      )}
-      {customArrowRight ? (
-        customArrowRight
-      ) : (
-        <Arrow
-          direction={horizontal ? "right" : "down"}
-          activeIndex={activeIndex}
-          total={data.length}
-          onPress={goToNext}
-        />
-      )}
-      {showPagination ? (
-        customPagination ? (
-          customPagination
-        ) : (
-          <Pagination activeIndex={activeIndex} total={data.length} />
-        )
-      ) : null}
+      {!showArrows
+        ? null
+        : renderCustomComponent(customArrowLeft) || (
+            <Arrow
+              direction={horizontal ? "left" : "up"}
+              activeIndex={activeIndex}
+              onPress={goToPrevious}
+            />
+          )}
+      {!showArrows
+        ? null
+        : renderCustomComponent(customArrowRight) || (
+            <Arrow
+              direction={horizontal ? "right" : "down"}
+              activeIndex={activeIndex}
+              total={data.length}
+              onPress={goToNext}
+            />
+          )}
+      {showPagination
+        ? renderCustomComponent(customPagination) || (
+            <Pagination activeIndex={activeIndex} total={data.length} />
+          )
+        : null}
     </>
   );
 }

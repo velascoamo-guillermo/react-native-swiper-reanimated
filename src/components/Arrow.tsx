@@ -1,4 +1,4 @@
-import { GlassView } from "expo-glass-effect";
+import { GlassView, GlassViewProps } from "expo-glass-effect";
 import React from "react";
 import {
   Dimensions,
@@ -43,6 +43,7 @@ interface ArrowProps {
   };
   arrowUpStyle?: StyleProp<ViewStyle>;
   arrowDownStyle?: StyleProp<ViewStyle>;
+  glassProps?: GlassViewProps;
   onPress: () => void;
 }
 
@@ -73,6 +74,7 @@ export default function Arrow({
   arrowRightStyle,
   arrowDownStyle,
   arrowUpStyle,
+  glassProps,
   onPress,
 }: ArrowProps & { direction: "left" | "right" | "up" | "down" }) {
   if (direction === "left") {
@@ -83,7 +85,7 @@ export default function Arrow({
         style={[{ left: 0 }, styles.arrowContainer, arrowLeftStyle]}
         onPress={onPress}
       >
-        <GlassView isInteractive={true} style={styles.glass}>
+        <GlassView isInteractive={true} style={styles.glass} {...glassProps}>
           <ExpoVectorIcon
             family="MaterialCommunityIcons"
             name={`chevron-left`}
@@ -102,7 +104,7 @@ export default function Arrow({
         style={[{ right: 0 }, styles.arrowContainer, arrowRightStyle]}
         onPress={onPress}
       >
-        <GlassView isInteractive={true} style={styles.glass}>
+        <GlassView isInteractive={true} style={styles.glass} {...glassProps}>
           <ExpoVectorIcon
             family="MaterialCommunityIcons"
             name={`chevron-right`}
@@ -121,7 +123,7 @@ export default function Arrow({
         style={[{ left: 0 }, styles.arrowContainer, arrowUpStyle]}
         onPress={onPress}
       >
-        <GlassView isInteractive={true} style={styles.glass}>
+        <GlassView isInteractive={true} style={styles.glass} {...glassProps}>
           <ExpoVectorIcon
             family="MaterialCommunityIcons"
             name={`chevron-up`}
@@ -140,7 +142,7 @@ export default function Arrow({
         style={[{ right: 0 }, styles.arrowContainer, arrowDownStyle]}
         onPress={onPress}
       >
-        <GlassView isInteractive={true} style={styles.glass}>
+        <GlassView isInteractive={true} style={styles.glass} {...glassProps}>
           <ExpoVectorIcon
             family="MaterialCommunityIcons"
             name={`chevron-down`}
