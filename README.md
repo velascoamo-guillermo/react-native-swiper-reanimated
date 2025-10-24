@@ -1,50 +1,117 @@
-# Welcome to your Expo app 👋
+# React Native Swiper Reanimated
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Un componente swiper suave y personalizable para React Native construido con Reanimated 3 y Gesture Handler.
 
-## Get started
+## Características
 
-1. Install dependencies
+- 🚀 **Performance**: Construido con Reanimated 3 para animaciones nativas de 60fps
+- 👆 **Gestos**: Implementa gestos de pan usando React Native Gesture Handler
+- ⚙️ **Personalizable**: Configuración flexible para velocidad, threshold y animaciones
+- 📱 **Responsive**: Se adapta automáticamente al ancho de pantalla
+- 🎯 **TypeScript**: Completamente tipado para mejor experiencia de desarrollo
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Instalación
 
 ```bash
-npm run reset-project
+npm install react-native-swiper-reanimated
+# o
+yarn add react-native-swiper-reanimated
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Dependencias requeridas
 
-## Learn more
+Este componente requiere las siguientes dependencias peer:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npm install react-native-reanimated react-native-gesture-handler
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Asegúrate de seguir las guías de instalación para:
 
-## Join the community
+- [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/)
+- [React Native Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/docs/fundamentals/getting-started/)
 
-Join our community of developers creating universal apps.
+## Uso
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```tsx
+import React, { useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { Swiper } from "react-native-swiper-reanimated";
+
+const App = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  return (
+    <View style={styles.container}>
+      <Swiper
+        onIndexChange={setCurrentIndex}
+        initialIndex={0}
+        springConfig={{ damping: 20, stiffness: 200 }}
+      >
+        <View style={[styles.page, { backgroundColor: "#FF6B6B" }]}>
+          <Text style={styles.pageText}>Página 1</Text>
+        </View>
+        <View style={[styles.page, { backgroundColor: "#4ECDC4" }]}>
+          <Text style={styles.pageText}>Página 2</Text>
+        </View>
+        <View style={[styles.page, { backgroundColor: "#45B7D1" }]}>
+          <Text style={styles.pageText}>Página 3</Text>
+        </View>
+      </Swiper>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  page: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  pageText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#FFF",
+  },
+});
+
+export default App;
+```
+
+## API
+
+### Props
+
+| Prop            | Tipo                                     | Default                           | Descripción                                               |
+| --------------- | ---------------------------------------- | --------------------------------- | --------------------------------------------------------- |
+| `children`      | `ReactNode`                              | -                                 | **Requerido.** Los elementos hijos a mostrar en el swiper |
+| `onIndexChange` | `(index: number) => void`                | `undefined`                       | Callback ejecutado cuando cambia el índice actual         |
+| `initialIndex`  | `number`                                 | `0`                               | Índice inicial del swiper                                 |
+| `springConfig`  | `{ damping: number; stiffness: number }` | `{ damping: 15, stiffness: 150 }` | Configuración de la animación spring                      |
+| `threshold`     | `number`                                 | `SCREEN_WIDTH * 0.3`              | Distancia mínima para activar el cambio de página         |
+
+## Demo
+
+Para ver la demo en acción:
+
+```bash
+git clone https://github.com/your-username/react-native-swiper-reanimated.git
+cd react-native-swiper-reanimated
+npm install
+npm start
+```
+
+## Licencia
+
+MIT
+
+## Contribuir
+
+Las contribuciones son bienvenidas! Por favor abre un issue o pull request.
+
+## Autor
+
+Guillermo Velasco
