@@ -15,6 +15,7 @@ const { width, height } = Dimensions.get("window");
 interface SwiperRenderItemInfo<T> {
   item: T;
   index: number;
+  progress: SharedValue<number>;
   goToNext: () => void;
   goToPrevious: () => void;
 }
@@ -98,6 +99,7 @@ export default function Swiper<T>({
     return renderItem({
       item,
       index,
+      progress: scrollX,
       goToNext,
       goToPrevious,
     });

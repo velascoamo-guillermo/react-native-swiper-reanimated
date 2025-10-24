@@ -92,17 +92,16 @@ Unlike other libraries that focus on basic swiping, we provide:
         <img src="./assets/demo/swiper-custom-arrows.gif" width="200" alt="Custom arrows with shared value progress" />
         <p><em>Advanced custom components with progress shared value</em></p>
       </td>
-      <td align="center"></td>
-      <td align="center"></td>
-    </tr>
-    <tr>
       <td align="center">
         <h4>📍 Swiper Pagination</h4>
         <img src="./assets/demo/swiper-pagination.gif" width="200" alt="Professional pagination with progress indicator" />
         <p><em>Clean pagination with progress counter overlay</em></p>
       </td>
-      <td align="center"></td>
-      <td align="center"></td>
+      <td align="center">
+        <h4>🎬 Animated Slides</h4>
+        <img src="./assets/demo/animate-slides.gif" width="200" alt="Parallax slide animations with blur effects" />
+        <p><em>Parallax scaling with background blur effects and smooth transitions</em></p>
+      </td>
     </tr>
   </table>
 </div>
@@ -114,10 +113,7 @@ Unlike other libraries that focus on basic swiping, we provide:
 - 🎯 **Smart Index Tracking** - Dynamic content that responds to the currently active slide
 - 🎨 **Custom Arrows & Pagination** - Advanced customization with progress shared values for smooth animations
 - 📍 **Swiper Pagination** - Clean pagination with progress counter overlay for enhanced UX
-- 🔄 **Seamless pagination** with animated dots showing current position
-- 💫 **Background blur effects** creating immersive visual experiences with each slide
-- 🎨 **Glassmorphism UI elements** - Modern frosted glass effect on navigation components
-- 📱 **Responsive design** that adapts perfectly to different screen orientations
+- 🎬 **Animated Slides** - Parallax scaling effects with background blur and smooth image transitions
 
 ### 🚀 Performance Highlights:
 
@@ -149,8 +145,8 @@ Ensure you have these dependencies installed:
 # Required peer dependencies
 npm install react-native-reanimated@^3.0.0 react-native-gesture-handler@^2.0.0
 
-# Optional (for icons and glass effects)
-npm install @expo/vector-icons expo-glass-effect
+# Optional (for icons)
+npm install @expo/vector-icons
 ```
 
 > **Note**: If you're using Expo, most dependencies are pre-installed.
@@ -226,21 +222,34 @@ const CustomSlide = ({ item, isActive }) => (
 ### 🔧 **Custom Arrows & Pagination**
 
 ```tsx
-import { GlassView } from "expo-glass-effect";
+import React from "react";
+import { View, Pressable, Text } from "react-native";
+
+const CustomLeftArrow = ({ onPress, disabled }) => (
+  <Pressable
+    style={[styles.customArrow, styles.customArrowLeft]}
+    onPress={onPress}
+    disabled={disabled}
+  >
+    <Text style={styles.arrowText}>‹</Text>
+  </Pressable>
+);
+
+const CustomRightArrow = ({ onPress, disabled }) => (
+  <Pressable
+    style={[styles.customArrow, styles.customArrowRight]}
+    onPress={onPress}
+    disabled={disabled}
+  >
+    <Text style={styles.arrowText}>›</Text>
+  </Pressable>
+);
 
 <Swiper
   data={data}
   renderItem={yourRenderItem}
-  customArrowLeft={
-    <GlassView style={customArrowStyle}>
-      <YourCustomLeftArrow />
-    </GlassView>
-  }
-  customArrowRight={
-    <GlassView style={customArrowStyle}>
-      <YourCustomRightArrow />
-    </GlassView>
-  }
+  customArrowLeft={CustomLeftArrow}
+  customArrowRight={CustomRightArrow}
   customPagination={<YourCustomPagination />}
 />;
 ```
@@ -255,6 +264,77 @@ import { GlassView } from "expo-glass-effect";
   showPagination={false}
 />
 ```
+
+### 🎬 **Animated Slides with Parallax Effects**
+
+```tsx
+import React from "react";
+import { View, Image, Dimensions, StyleSheet } from "react-native";
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+} from "react-native-reanimated";
+
+const { width, height } = Dimensions.get("window");
+
+const AnimatedSlide = ({ item, index, progress }) => {
+  const imageStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: interpolate(
+            progress.value,
+            [index - 1, index, index + 1],
+            [1.2, 1, 1.2]
+          ),
+        },
+      ],
+    };
+  });
+
+  return (
+    <View style={styles.slide}>
+      {/* Background with blur effect */}
+      <Image
+        source={{ uri: item.url }}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+        blurRadius={30}
+      />
+
+      {/* Foreground image with parallax scaling */}
+      <Animated.Image
+        source={{ uri: item.url }}
+        style={[
+          {
+            width: width / 1.2,
+            height: height / 1.6,
+            borderRadius: 16,
+          },
+          imageStyle,
+        ]}
+        resizeMode="cover"
+      />
+    </View>
+  );
+};
+
+<Swiper
+  data={slides}
+  renderItem={({ item, index, progress }) => (
+    <AnimatedSlide item={item} index={index} progress={progress} />
+  )}
+  showArrows={false}
+/>;
+```
+
+**Key Features:**
+
+- 🎬 **Parallax Scaling** - Images scale from 1.2x to 1x based on scroll position
+- 🌫️ **Background Blur** - Blurred background image with 30px blur radius
+- 🖼️ **Foreground Focus** - Sharp foreground image with rounded corners
+- 📱 **Responsive Design** - Adapts to different screen sizes automatically
+- ⚡ **Smooth Transitions** - 60fps animations using progress shared value
 
 ### 🎭 **Rich Animation Configurations**
 
@@ -500,9 +580,8 @@ const CustomPagination = ({
   data={mySlides}
   renderItem={({ item }) => <MySlideComponent item={item} />}
   customPagination={AnimatedDotsPagination}
-  showPagination={true}
-  // customArrowLeft and customArrowRight are omitted
-  // Built-in arrows will be hidden automatically when using customPagination
+  showArrows={false}
+  // Built-in arrows are hidden, custom pagination takes over
 />
 ```
 
@@ -511,7 +590,7 @@ const CustomPagination = ({
 - 🎨 **Image galleries** - Clean, minimal navigation
 - 📱 **Mobile-first designs** - Touch-friendly dot navigation
 - 🎯 **Focus on content** - No distracting arrow buttons
-- ⚡ **Smooth UX** - 1.4x scaling with color transitions
+- ⚡ **Smooth UX** - 1.8x scaling with color transitions
 
 ---
 
@@ -522,13 +601,45 @@ const CustomPagination = ({
 | Prop                    | Type                          | Default      | Description                                                                                      |
 | ----------------------- | ----------------------------- | ------------ | ------------------------------------------------------------------------------------------------ |
 | **data**                | `T[]`                         | **required** | Array of data items to render                                                                    |
-| **renderItem**          | `ListRenderItem<T>`           | **required** | Function to render each slide                                                                    |
+| **renderItem**          | `Function`                    | **required** | Function to render each slide (see RenderItem Props below)                                       |
 | **horizontal**          | `boolean`                     | `true`       | Scroll direction (horizontal/vertical)                                                           |
-| **showPagination**      | `boolean`                     | `true`       | Show/hide pagination dots                                                                        |
+| **showPagination**      | `boolean`                     | `true`       | Show/hide built-in pagination dots                                                               |
+| **showArrows**          | `boolean`                     | `true`       | Show/hide built-in navigation arrows                                                             |
 | **onActiveIndexChange** | `(index: number) => void`     | `undefined`  | Callback when active slide changes                                                               |
 | **customArrowLeft**     | `React.ReactNode \| Function` | `undefined`  | Custom left arrow component (receives `{activeIndex, total, progress, goToNext, goToPrevious}`)  |
 | **customArrowRight**    | `React.ReactNode \| Function` | `undefined`  | Custom right arrow component (receives `{activeIndex, total, progress, goToNext, goToPrevious}`) |
 | **customPagination**    | `React.ReactNode \| Function` | `undefined`  | Custom pagination component (receives `{activeIndex, total, progress, goToNext, goToPrevious}`)  |
+
+### RenderItem Props Interface
+
+The `renderItem` function receives the following props:
+
+```tsx
+interface SwiperRenderItemInfo<T> {
+  item: T; // The data item to render
+  index: number; // Current item index (0, 1, 2...)
+  progress: SharedValue<number>; // Smooth scroll progress (0.0, 0.1, 0.2...)
+  goToNext: () => void; // Function to navigate to next slide
+  goToPrevious: () => void; // Function to navigate to previous slide
+}
+
+// Usage example:
+const renderItem = ({ item, index, progress, goToNext, goToPrevious }) => {
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      progress.value,
+      [index - 1, index, index + 1],
+      [0.5, 1, 0.5]
+    ),
+  }));
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <YourSlideContent item={item} />
+    </Animated.View>
+  );
+};
+```
 
 ### Built-in Components
 
@@ -647,13 +758,11 @@ const theme = {
 Replace any component with your own:
 
 ```tsx
-// Custom glassmorphism arrows
-const GlassArrow = ({ direction, onPress }) => (
-  <GlassView intensity={20} style={styles.glassArrow}>
-    <Pressable onPress={onPress}>
-      <Icon name={direction === "left" ? "chevron-left" : "chevron-right"} />
-    </Pressable>
-  </GlassView>
+// Custom arrow components
+const CustomArrow = ({ direction, onPress }) => (
+  <Pressable style={styles.customArrow} onPress={onPress}>
+    <Text style={styles.arrowText}>{direction === "left" ? "‹" : "›"}</Text>
+  </Pressable>
 );
 
 // Custom progress pagination

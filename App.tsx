@@ -1,21 +1,8 @@
 import React, { useState } from "react";
-import {
-  Dimensions,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Dimensions, Image, StyleSheet, View } from "react-native";
 import Animated, {
-  FadeInUp,
   interpolate,
-  interpolateColor,
   useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withSpring,
-  withTiming,
 } from "react-native-reanimated";
 import Swiper from "./src/components/Swiper";
 
@@ -74,6 +61,7 @@ const OnboardingSlide = ({
   index,
   isActive,
   isLast,
+  progress,
   goToNext,
   goToPrevious,
 }: {
@@ -84,77 +72,42 @@ const OnboardingSlide = ({
   goToNext: () => void;
   goToPrevious: () => void;
 }) => {
-  const titleOpacity = useSharedValue(isActive ? 1 : 0);
-  const descriptionOpacity = useSharedValue(isActive ? 1 : 0);
-  const buttonOpacity = useSharedValue(isActive ? 1 : 0);
-  const contentTranslateY = useSharedValue(isActive ? 0 : 50);
-
-  React.useEffect(() => {
-    if (isActive) {
-      titleOpacity.value = withDelay(200, withTiming(1, { duration: 600 }));
-      descriptionOpacity.value = withDelay(
-        400,
-        withTiming(1, { duration: 600 })
-      );
-      buttonOpacity.value = withDelay(600, withTiming(1, { duration: 600 }));
-      contentTranslateY.value = withSpring(0, { damping: 15, stiffness: 150 });
-    } else {
-      titleOpacity.value = withTiming(0, { duration: 300 });
-      descriptionOpacity.value = withTiming(0, { duration: 300 });
-      buttonOpacity.value = withTiming(0, { duration: 300 });
-      contentTranslateY.value = withTiming(50, { duration: 300 });
-    }
-  }, [isActive]);
-
-  const titleAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: titleOpacity.value,
-    transform: [{ translateY: contentTranslateY.value }],
-  }));
-
-  const descriptionAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: descriptionOpacity.value,
-    transform: [{ translateY: contentTranslateY.value }],
-  }));
-
-  const buttonAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: buttonOpacity.value,
-    transform: [{ translateY: contentTranslateY.value }],
-  }));
+  const imageStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: interpolate(
+            progress.value,
+            [index - 1, index, index + 1],
+            [1.2, 1, 1.2]
+          ),
+        },
+      ],
+    };
+  });
 
   return (
     <View style={styles.slide}>
       {/* Background Image with Overlay */}
       <Image
         source={{ uri: item.url }}
-        style={styles.backgroundImage}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+        blurRadius={30}
+      />
+
+      <Animated.Image
+        source={{ uri: item.url }}
+        style={[
+          {
+            width: width / 1.2,
+            height: height / 1.6,
+            borderRadius: 16,
+          },
+          imageStyle,
+        ]}
         resizeMode="cover"
       />
-      <View style={styles.overlay} />
-
-      {/* Content Container */}
-      <View style={styles.contentContainer}>
-        <Animated.Text style={[styles.title, titleAnimatedStyle]}>
-          {item.title}
-        </Animated.Text>
-
-        <Animated.Text style={[styles.description, descriptionAnimatedStyle]}>
-          {item.description}
-        </Animated.Text>
-
-        <Animated.View style={[styles.buttonContainer, buttonAnimatedStyle]}>
-          <Pressable style={styles.primaryButton} onPress={goToNext}>
-            <Text style={styles.primaryButtonText}>{item.primaryAction}</Text>
-          </Pressable>
-
-          {item.secondaryAction && !isLast && (
-            <Pressable style={styles.secondaryButton} onPress={goToPrevious}>
-              <Text style={styles.secondaryButtonText}>
-                {item.secondaryAction}
-              </Text>
-            </Pressable>
-          )}
-        </Animated.View>
-      </View>
     </View>
   );
 };
@@ -165,11 +118,13 @@ export default function App() {
   const renderItem = ({
     item,
     index,
+    progress,
     goToNext,
     goToPrevious,
   }: {
     item: OnboardingData;
     index: number;
+    progress;
     goToNext: () => void;
     goToPrevious: () => void;
   }) => (
@@ -177,66 +132,11 @@ export default function App() {
       item={item}
       index={index}
       isActive={index === activeIndex}
+      progress={progress}
       isLast={index === onboardingSlides.length - 1}
       goToNext={goToNext}
       goToPrevious={goToPrevious}
     />
-  );
-
-  // Animated Dots Pagination Component
-  const AnimatedDotsPagination = ({
-    activeIndex,
-    total,
-    progress,
-  }: {
-    activeIndex: number;
-    total: number;
-    progress: any; // SharedValue<number>
-  }) => (
-    <Animated.View entering={FadeInUp.delay(600)} style={styles.dotsContainer}>
-      {Array.from({ length: total }, (_, index) => {
-        const dotStyle = useAnimatedStyle(() => {
-          // Scale animation: active dot scales to 1.4x
-          const scale = interpolate(
-            progress.value,
-            [index - 1, index, index + 1],
-            [1, 1.8, 1],
-            "clamp"
-          );
-
-          // Color animation: active dot gets bright color
-          const backgroundColor = interpolateColor(
-            progress.value,
-            [index - 0.5, index, index + 0.5],
-            ["rgba(255, 255, 255, 0.3)", "#007AFF", "#007AFF"]
-          );
-
-          // Opacity for smooth transitions
-          const opacity = interpolate(
-            progress.value,
-            [index - 1, index, index + 1],
-            [0.4, 1, 0.4],
-            "clamp"
-          );
-
-          const width = interpolate(
-            progress.value,
-            [index - 1, index, index + 1],
-            [8, 16, 8],
-            "clamp"
-          );
-
-          return {
-            transform: [{ scale }],
-            backgroundColor,
-            opacity,
-            width,
-          };
-        });
-
-        return <Animated.View key={index} style={[styles.dot, dotStyle]} />;
-      })}
-    </Animated.View>
   );
 
   /*
@@ -264,19 +164,8 @@ export default function App() {
         data={onboardingSlides}
         renderItem={renderItem}
         onActiveIndexChange={setActiveIndex}
-        customPagination={AnimatedDotsPagination}
         showArrows={false}
       />
-
-      {/* Custom Progress Indicator */}
-      <Animated.View
-        entering={FadeInUp.delay(1000)}
-        style={styles.progressContainer}
-      >
-        <Text style={styles.progressText}>
-          {activeIndex + 1} / {onboardingSlides.length}
-        </Text>
-      </Animated.View>
     </View>
   );
 }
@@ -290,6 +179,8 @@ const styles = StyleSheet.create({
     width,
     height,
     position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
   },
   backgroundImage: {
     ...StyleSheet.absoluteFillObject,
