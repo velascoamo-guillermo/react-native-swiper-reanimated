@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import Animated, {
   interpolate,
+  SharedValue,
   useAnimatedStyle,
 } from "react-native-reanimated";
 import Swiper from "./src/components/Swiper";
@@ -55,22 +56,15 @@ const onboardingSlides: OnboardingData[] = [
   },
 ];
 
-// Onboarding Screen Component
-const OnboardingSlide = ({
+// Animated Slide Component
+const AnimatedSlide = ({
   item,
   index,
-  isActive,
-  isLast,
   progress,
-  goToNext,
-  goToPrevious,
 }: {
   item: OnboardingData;
   index: number;
-  isActive: boolean;
-  isLast: boolean;
-  goToNext: () => void;
-  goToPrevious: () => void;
+  progress: SharedValue<number>;
 }) => {
   const imageStyle = useAnimatedStyle(() => {
     return {
@@ -88,7 +82,7 @@ const OnboardingSlide = ({
 
   return (
     <View style={styles.slide}>
-      {/* Background Image with Overlay */}
+      {/* Background Image with Blur Effect */}
       <Image
         source={{ uri: item.url }}
         style={StyleSheet.absoluteFillObject}
@@ -96,6 +90,7 @@ const OnboardingSlide = ({
         blurRadius={30}
       />
 
+      {/* Foreground Image with Parallax Animation */}
       <Animated.Image
         source={{ uri: item.url }}
         style={[
@@ -119,43 +114,23 @@ export default function App() {
     item,
     index,
     progress,
-    goToNext,
-    goToPrevious,
   }: {
     item: OnboardingData;
     index: number;
-    progress;
-    goToNext: () => void;
-    goToPrevious: () => void;
-  }) => (
-    <OnboardingSlide
-      item={item}
-      index={index}
-      isActive={index === activeIndex}
-      progress={progress}
-      isLast={index === onboardingSlides.length - 1}
-      goToNext={goToNext}
-      goToPrevious={goToPrevious}
-    />
-  );
+    progress: SharedValue<number>;
+  }) => <AnimatedSlide item={item} index={index} progress={progress} />;
 
   /*
-  🚀 ADVANCED USAGE with Progress Shared Value:
+  🎬 Animated Slides with Parallax Effects
   
-  The 'progress' shared value gives you smooth, real-time scroll position.
-  Use it for:
-  - Smooth opacity transitions
-  - Scale animations based on scroll
-  - Custom progress indicators
-  - Parallax effects
+  This example demonstrates:
+  - Parallax scaling animations using progress SharedValue
+  - Background blur effects for depth
+  - Smooth interpolation based on scroll position
+  - Clean, minimal design without arrows
   
-  Example with interpolate:
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(progress.value, [0, 1], [0.5, 1]),
-    transform: [{ 
-      scale: interpolate(progress.value, [0, 0.5, 1], [0.8, 1, 0.8]) 
-    }],
-  }));
+  The progress SharedValue provides real-time scroll position (0.0, 0.1, 0.2...)
+  enabling smooth animations that respond to user gestures.
   */
 
   return (
@@ -178,173 +153,7 @@ const styles = StyleSheet.create({
   slide: {
     width,
     height,
-    position: "relative",
     justifyContent: "center",
     alignItems: "center",
-  },
-  backgroundImage: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
-    paddingHorizontal: 30,
-    paddingBottom: 120,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    textAlign: "center",
-    marginBottom: 16,
-    lineHeight: 40,
-  },
-  description: {
-    fontSize: 16,
-    color: "rgba(255, 255, 255, 0.9)",
-    textAlign: "center",
-    lineHeight: 24,
-    marginBottom: 40,
-    paddingHorizontal: 20,
-  },
-  buttonContainer: {
-    width: "100%",
-    gap: 12,
-  },
-  primaryButton: {
-    backgroundColor: "#007AFF",
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 25,
-    alignItems: "center",
-    shadowColor: "#007AFF",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  primaryButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
-  secondaryButton: {
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  secondaryButtonText: {
-    fontSize: 14,
-    color: "rgba(255, 255, 255, 0.7)",
-    fontWeight: "500",
-  },
-  progressContainer: {
-    position: "absolute",
-    top: 80,
-    right: 30,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backdropFilter: "blur(10px)",
-  },
-  progressText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  // Custom Pagination Styles
-  customPaginationContainer: {
-    position: "absolute",
-    bottom: 50,
-    right: 0,
-  },
-  navButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 10,
-  },
-  navButtonDisabled: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    opacity: 0.5,
-  },
-  navButtonText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  dotsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-    bottom: 80,
-    gap: 8,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.4)",
-    marginHorizontal: 4,
-  },
-  activeDot: {
-    backgroundColor: "#FFFFFF",
-    width: 24,
-    borderRadius: 4,
-  },
-  // Custom Arrow Styles - Now Active!
-  customArrow: {
-    position: "absolute",
-    width: 60,
-    bottom: 50,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: -30,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  customArrowLeft: {
-    left: 20,
-  },
-  customArrowRight: {
-    right: 20,
-  },
-  customArrowDisabled: {
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-    opacity: 0.5,
-  },
-  arrowText: {
-    color: "#FFFFFF",
-    fontSize: 28,
-    fontWeight: "600",
-  },
-  arrowTextDisabled: {
-    color: "rgba(255, 255, 255, 0.5)",
-  },
-  // Enhanced Pagination Styles
-  navButtonTextDisabled: {
-    color: "rgba(255, 255, 255, 0.3)",
-  },
-  paginationText: {
-    color: "rgba(255, 255, 255, 0.8)",
-    fontSize: 12,
-    fontWeight: "500",
-    marginTop: 8,
-    textAlign: "center",
   },
 });

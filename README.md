@@ -14,27 +14,20 @@
 
 ## ✨ Why Choose React Native Swiper Reanimated?
 
-### 🆚 **vs. react-native-swiper (58k+ weekly downloads)**
+### 🚀 **Modern Architecture & Performance**
 
-| Feature              | react-native-swiper      | **react-native-swiper-reanimated**     |
-| -------------------- | ------------------------ | -------------------------------------- |
-| **Performance**      | Legacy ScrollView-based  | ⚡ **Reanimated v3/v4 - 60fps native** |
-| **Last Updated**     | 6+ years ago (abandoned) | 🔥 **Actively maintained**             |
-| **TypeScript**       | Basic support            | 💎 **Full type safety built-in**       |
-| **Bundle Size**      | 66.6kB                   | 📦 **~29kB - 56% smaller**             |
-| **Gesture Handling** | Basic ScrollView         | 🎯 **Advanced gesture handling**       |
-| **Animation System** | Limited animations       | 🎭 **Rich animation ecosystem**        |
-| **Customization**    | Fixed components         | 🎨 **Infinite customization**          |
-| **Modern React**     | Class components         | ⚛️ **Modern hooks & functional**       |
+- ⚡ **60fps Native Animations** - Powered by Reanimated v3/v4 for buttery-smooth performance
+- 🏎️ **UI Thread Execution** - Zero JS bridge overhead, all animations run natively
+- 📦 **Lightweight Bundle** - Optimized package size without compromising features
+- 🎯 **Advanced Gesture Handling** - Smooth, responsive touch interactions
 
-### 🆚 **vs. Other Modern Swipers**
+### � **Rich Feature Set**
 
-Unlike other libraries that focus on basic swiping, we provide:
-
-- **🎬 Rich Animation API** - Custom enter/exit animations for content
-- **🔧 Modular Architecture** - Replace any component (arrows, pagination, content)
-- **📱 Cross-Platform** - Pixel-perfect on iOS, Android, and Web
-- **🎯 Developer Experience** - IntelliSense, type safety, and clear APIs
+- 🎬 **Rich Animation API** - Custom enter/exit animations for content with progress tracking
+- 🔧 **Modular Architecture** - Replace any component (arrows, pagination, content)
+- ✨ **Glass Effect Design** - Beautiful built-in glassmorphism navigation arrows
+- 💎 **Full TypeScript** - Complete type safety and IntelliSense support
+- 📱 **Cross-Platform** - Pixel-perfect on iOS, Android, and Web
 
 ---
 
@@ -53,6 +46,7 @@ Unlike other libraries that focus on basic swiping, we provide:
 - 🔧 **Component Modularity** - Replace arrows, pagination, or entire slides
 - 🎨 **Infinite Styling** - Style every aspect with full CSS-in-JS support
 - 📐 **Layout Options** - Horizontal, vertical, or custom orientations
+- ✨ **Glass Effect Arrows** - Built-in navigation arrows with beautiful glassmorphism design
 
 ### 🛠️ **Developer Experience**
 
@@ -145,7 +139,10 @@ Ensure you have these dependencies installed:
 # Required peer dependencies
 npm install react-native-reanimated@^3.0.0 react-native-gesture-handler@^2.0.0
 
-# Optional (for icons)
+# Required for glass effect arrows
+npm install expo-glass-effect
+
+# Optional (for custom icons)
 npm install @expo/vector-icons
 ```
 
@@ -645,15 +642,25 @@ const renderItem = ({ item, index, progress, goToNext, goToPrevious }) => {
 
 #### `<Arrow>` Component
 
+Built-in navigation arrows with **beautiful glassmorphism design** powered by `expo-glass-effect`.
+
 ```tsx
 interface ArrowProps {
   direction: "left" | "right" | "up" | "down";
   activeIndex: number;
   total?: number;
   onPress: () => void;
+  glassProps?: GlassViewProps; // Customize glass effect properties
   // ... animation and styling props
 }
 ```
+
+**Glass Effect Features:**
+
+- ✨ **Glassmorphism Design** - Modern frosted glass appearance
+- 🎨 **Customizable Blur** - Adjust intensity and tint via `glassProps`
+- 📱 **Platform Optimized** - Native blur effects on iOS and Android
+- 🎯 **Interactive Ready** - Built-in touch feedback and animations
 
 #### Custom Component Props Interface
 
